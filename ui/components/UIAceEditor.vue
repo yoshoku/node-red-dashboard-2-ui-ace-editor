@@ -2,10 +2,11 @@
     <!-- Component must be wrapped in a block so props such as className and style can be passed in from parent -->
     <div className="ui-ace-editor-wrapper">
         <v-ace-editor
-            :value="content"
+            v-model:value="content"
             :lang="mode"
             :theme="theme"
             style="height: 100%;"
+            @blur="onBlur"
         />
     </div>
 </template>
@@ -92,10 +93,21 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        mode () {
+        content: {
+            get () {
+                return this.messages[this.id]?.payload
+            },
+            set (val) {
+                if (!this.messages[this.id]) {
+                    this.messages[this.id] = {}
+                }
+                this.messages[this.id].payload = val
+            }
+        },
+        mode: function () {
             return this.getProperty('mode') || 'javascript'
         },
-        theme () {
+        theme: function () {
             return this.getProperty('theme') || 'chrome'
         }
     },
@@ -108,31 +120,11 @@ export default {
             widget-action just sends a msg to Node-RED, it does not store the msg state server-side
             alternatively, you can use widget-change, which will also store the msg in the Node's datastore
         */
-        send (msg) {
-            this.$socket.emit('widget-action', this.id, msg)
+        send () {
+            this.$socket.emit('widget-change', this.id, this.content)
         },
-        /*
-            (optional) Custom onInput function to handle incoming messages from Node-RED
-        */
-        onInput (msg) {
-            // load the latest message from the Node-RED datastore when this widget is loaded
-            // storing it in our vuex store so that we have it saved as we navigate around
-            this.$store.commit('data/bind', {
-                widgetId: this.id,
-                msg
-            })
-        },
-        /*
-            (optional) Custom onLoad function to handle the loading state of the widget
-            msg   - the latest message from the Node-RED datastore
-            state - The Node-RED config, including any overrides saved to the server-side statestore
-        */
-        onLoad (msg, state) {
-            // loads the last msg received into this node from the Node-RED datastore
-            // state is auto-stored into the widget props, but is available here if you want to do anything else
-        },
-        alert (text) {
-            alert(text)
+        onBlur () {
+            this.send()
         }
     }
 }
