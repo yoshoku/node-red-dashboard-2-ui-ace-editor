@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "vue": "^3.3.8",
+    "vue3-ace-editor": "^2.2.4",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
