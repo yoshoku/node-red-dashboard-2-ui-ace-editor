@@ -18,7 +18,7 @@ export default defineConfig({
             targets: [
                 {
                     // Copy the build output into Node-RED's /resources folder
-                    src: normalizePath(resolve(__dirname,`./ui/dist/${LIBRARY_NAME}.umd.js`)),
+                    src: normalizePath(resolve(__dirname, `./ui/dist/${LIBRARY_NAME}.umd.js`)),
                     dest: normalizePath(resolve(__dirname, 'resources'))
                 }
             ]
