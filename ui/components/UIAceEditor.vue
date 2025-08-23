@@ -2,24 +2,68 @@
     <!-- Component must be wrapped in a block so props such as className and style can be passed in from parent -->
     <div className="ui-ace-editor-wrapper">
         <v-ace-editor
-            v-model:value="content"
-            lang="javascript"
-            theme="github"
+            :value="content"
+            :lang="mode"
+            :theme="theme"
             style="height: 100%;"
-            @init="editorInit"
         />
     </div>
 </template>
 
 <script>
 import ace from 'ace-builds'
-import modeJavascriptUrl from 'ace-builds/src-noconflict/mode-javascript'
-import themeGitHubUrl from 'ace-builds/src-noconflict/theme-github'
+/* eslint-disable import/no-unresolved */
+import modeAsciiDocUrl from 'ace-builds/src-noconflict/mode-asciidoc?url'
+import modeCCppUrl from 'ace-builds/src-noconflict/mode-c_cpp?url'
+import modeCSSUrl from 'ace-builds/src-noconflict/mode-css?url'
+import modeGoUrl from 'ace-builds/src-noconflict/mode-golang?url'
+import modeHTMLUrl from 'ace-builds/src-noconflict/mode-html?url'
+import modeJavaUrl from 'ace-builds/src-noconflict/mode-java?url'
+import modeJavaScriptUrl from 'ace-builds/src-noconflict/mode-javascript?url'
+import modeJSONUrl from 'ace-builds/src-noconflict/mode-json?url'
+import modeMarkdownUrl from 'ace-builds/src-noconflict/mode-markdown?url'
+import modePHPUrl from 'ace-builds/src-noconflict/mode-php?url'
+import modePythonUrl from 'ace-builds/src-noconflict/mode-python?url'
+import modeRubyUrl from 'ace-builds/src-noconflict/mode-ruby?url'
+import modeRustUrl from 'ace-builds/src-noconflict/mode-rust?url'
+import modeShellUrl from 'ace-builds/src-noconflict/mode-sh?url'
+import modeSQLUrl from 'ace-builds/src-noconflict/mode-sql?url'
+import modeYAMLUrl from 'ace-builds/src-noconflict/mode-yaml?url'
+import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url'
+import themeCloudsUrl from 'ace-builds/src-noconflict/theme-clouds?url'
+import themeGitHubUrl from 'ace-builds/src-noconflict/theme-github?url'
+import themeGitHubDarkUrl from 'ace-builds/src-noconflict/theme-github_dark?url'
+import themeMonokaiUrl from 'ace-builds/src-noconflict/theme-monokai?url'
+import themeSolarizedDarkUrl from 'ace-builds/src-noconflict/theme-solarized_dark?url'
+import themeSolarizedLightUrl from 'ace-builds/src-noconflict/theme-solarized_light?url'
+/* eslint-enable import/no-unresolved */
 import { VAceEditor } from 'vue3-ace-editor'
 import { mapState } from 'vuex'
 
-ace.config.setModuleUrl('ace/mode/javascript', modeJavascriptUrl)
+ace.config.setModuleUrl('ace/mode/css', modeCSSUrl)
+ace.config.setModuleUrl('ace/mode/javascript', modeJavaScriptUrl)
+ace.config.setModuleUrl('ace/mode/python', modePythonUrl)
+ace.config.setModuleUrl('ace/mode/ruby', modeRubyUrl)
+ace.config.setModuleUrl('ace/mode/php', modePHPUrl)
+ace.config.setModuleUrl('ace/mode/java', modeJavaUrl)
+ace.config.setModuleUrl('ace/mode/c_cpp', modeCCppUrl)
+ace.config.setModuleUrl('ace/mode/golang', modeGoUrl)
+ace.config.setModuleUrl('ace/mode/rust', modeRustUrl)
+ace.config.setModuleUrl('ace/mode/markdown', modeMarkdownUrl)
+ace.config.setModuleUrl('ace/mode/asciidoc', modeAsciiDocUrl)
+ace.config.setModuleUrl('ace/mode/json', modeJSONUrl)
+ace.config.setModuleUrl('ace/mode/yaml', modeYAMLUrl)
+ace.config.setModuleUrl('ace/mode/sql', modeSQLUrl)
+ace.config.setModuleUrl('ace/mode/html', modeHTMLUrl)
+ace.config.setModuleUrl('ace/mode/sh', modeShellUrl)
+
+ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl)
+ace.config.setModuleUrl('ace/theme/clouds', themeCloudsUrl)
+ace.config.setModuleUrl('ace/theme/monokai', themeMonokaiUrl)
 ace.config.setModuleUrl('ace/theme/github', themeGitHubUrl)
+ace.config.setModuleUrl('ace/theme/github_dark', themeGitHubDarkUrl)
+ace.config.setModuleUrl('ace/theme/solarized_light', themeSolarizedLightUrl)
+ace.config.setModuleUrl('ace/theme/solarized_dark', themeSolarizedDarkUrl)
 
 export default {
     name: 'UIAceEditor',
@@ -32,9 +76,6 @@ export default {
         id: { type: String, required: true },
         props: { type: Object, default: () => ({}) },
         state: { type: Object, default: () => ({ enabled: false, visible: false }) }
-    },
-    setup (props) {
-        console.info('UIAceEditor setup with:', props)
     },
     data () {
         return {
@@ -51,10 +92,11 @@ export default {
     },
     computed: {
         ...mapState('data', ['messages']),
-        // wrap our "example" property in a computed property to ensure it re-calculates when the property changes
-        example () {
-            // use the globally available "getProperty" function
-            return this.getProperty('example')
+        mode () {
+            return this.getProperty('mode') || 'javascript'
+        },
+        theme () {
+            return this.getProperty('theme') || 'chrome'
         }
     },
     created () {
@@ -89,33 +131,8 @@ export default {
             // loads the last msg received into this node from the Node-RED datastore
             // state is auto-stored into the widget props, but is available here if you want to do anything else
         },
-        /*
-            (optional) Custom onDynamicProperties function to handle dynamic properties
-            msg - the latest message from the Node-RED datastore
-        */
-        onDynamicProperties (msg) {
-            // handle any dynamic properties that are sent from Node-RED
-            const updates = msg.ui_update
-            if (!updates) {
-                return
-            }
-            if (typeof updates.example !== 'undefined') {
-                // use the globally available "setDynamicProperties" function to store any updates to this property
-                this.setDynamicProperties({ example: updates.example })
-            }
-        },
         alert (text) {
             alert(text)
-        },
-        /*
-            You can also emit custom events to Node-RED, which can be handled by a custom event handler
-            See the ui-example.js file for how to subscribe to these.
-        */
-        test () {
-            console.info('custom event handler:')
-            this.$socket.emit('my-custom-event', this.id, {
-                payload: 'Custom Event'
-            })
         }
     }
 }

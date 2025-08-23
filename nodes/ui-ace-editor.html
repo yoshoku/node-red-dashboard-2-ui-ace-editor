@@ -6,7 +6,8 @@
             name: { value: "" },
             group: { type: 'ui-group', required: true },
             order: { value: 0 },
-            example: { value: "" },
+            mode: { value: 'javascript' },
+            theme: { value: 'chrome' },
             width: {
                 value: 0,
                 validate: function (v) {
@@ -32,6 +33,12 @@
                 height: '#node-input-height',
                 group: '#node-input-group'
             });
+            if (!this.mode) {
+                $('#node-input-mode').val('javascript');
+            }
+            if (!this.theme) {
+                $('#node-input-theme').val('chrome');
+            }
         }
     });
 </script>
@@ -52,7 +59,36 @@
         <button class="editor-button" id="node-input-size"></button>
     </div>
     <div class="form-row">
-        <label for="node-input-example"><i class="fa fa-hand"></i> Example</label>
-        <input type="text" id="node-input-example">
+        <label for="node-input-mode"><i class="fa fa-keyboard-o"></i> Mode</label>
+        <select id="node-input-mode">
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+            <option value="ruby">Ruby</option>
+            <option value="php">PHP</option>
+            <option value="java">Java</option>
+            <option value="c_cpp">C/C++</option>
+            <option value="go">Go</option>
+            <option value="rust">Rust</option>
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+            <option value="markdown">Markdown</option>
+            <option value="asciidoc">AsciiDoc</option>
+            <option value="json">JSON</option>
+            <option value="yaml">YAML</option>
+            <option value="sql">SQL</option>
+            <option value="sh">Shell Script</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-theme"><i class="fa fa-picture-o"></i> Theme</label>
+        <select id="node-input-theme">
+            <option value="chrome">Chrome</option>
+            <option value="clouds">Clouds</option>
+            <option value="monokai">Monokai</option>
+            <option value="github">GitHub</option>
+            <option value="github_dark">GitHub Dark</option>
+            <option value="solarized_light">Solarized Light</option>
+            <option value="solarized_dark">Solarized Dark</option>
+        </select>
     </div>
 </script>

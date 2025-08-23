@@ -16,9 +16,11 @@ module.exports = function (RED) {
                 // check for any dynamic properties being set
                 const updates = msg.ui_update
                 if (updates) {
-                    if (typeof updates.example !== 'undefined') {
-                        // save the "example" property in the Node-RED statestore
-                        base.stores.state.set(base, node, msg, 'example', updates.example)
+                    if (typeof updates.mode !== 'undefined') {
+                        base.stores.state.set(base, node, msg, 'mode', updates.mode)
+                    }
+                    if (typeof updates.theme !== 'undefined') {
+                        base.stores.state.set(base, node, msg, 'theme', updates.theme)
                     }
                 }
                 return msg
