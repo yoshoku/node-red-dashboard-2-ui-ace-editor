@@ -7,6 +7,7 @@
             :theme="theme"
             style="height: 100%;"
             @blur="onBlur"
+            @keyup.enter="onEnter"
         />
     </div>
 </template>
@@ -124,7 +125,14 @@ export default {
             this.$socket.emit('widget-change', this.id, this.content)
         },
         onBlur () {
-            this.send()
+            if (this.props.sendOnBlur) {
+                this.send()
+            }
+        },
+        onEnter () {
+            if (this.props.sendOnEnter) {
+                this.send()
+            }
         }
     }
 }
