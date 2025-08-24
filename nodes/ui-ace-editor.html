@@ -8,6 +8,7 @@
             order: { value: 0 },
             mode: { value: 'javascript' },
             theme: { value: 'chrome' },
+            passthru: { value: true },
             width: {
                 value: 0,
                 validate: function (v) {
@@ -90,5 +91,9 @@
             <option value="solarized_light">Solarized Light</option>
             <option value="solarized_dark">Solarized Dark</option>
         </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-passthru" style="width: auto;"><i class="fa fa-arrow-right"></i> If msg arrives on input, pass it to output:</label>
+        <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;" />
     </div>
 </script>

@@ -29,7 +29,9 @@ module.exports = function (RED) {
                 // store the latest value in our Node-RED datastore
                 base.stores.data.save(base, node, msg)
                 // send it to any connected nodes in Node-RED
-                send(msg)
+                if (config.passthru) {
+                    send(msg)
+                }
             },
             onSocket: {
                 'my-custom-event': function (conn, id, msg) {
