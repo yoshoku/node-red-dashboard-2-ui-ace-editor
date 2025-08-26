@@ -2,6 +2,9 @@
 
 A code editor widget with Ace for Node-RED Dashboard 2.0.
 
+![Example of flow](examples/flows.png)
+![Example of dashboard](examples/dashboard.png)
+
 ## Installation
 
 You can install this node from the "Manage Palette" menu in the Node-RED interface.
