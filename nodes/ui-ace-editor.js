@@ -32,17 +32,6 @@ module.exports = function (RED) {
                 if (config.passthru) {
                     send(msg)
                 }
-            },
-            onSocket: {
-                'my-custom-event': function (conn, id, msg) {
-                    console.info('"my-custom-event" received:', conn.id, id, msg)
-                    console.info('conn.id:', conn.id)
-                    console.info('id:', id)
-                    console.info('msg:', msg)
-                    console.info('node.id:', node.id)
-                    // emit a msg in Node-RED from this node
-                    node.send(msg)
-                }
             }
         }
 
