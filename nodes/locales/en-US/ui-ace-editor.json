@@ -1,7 +1,35 @@
 {
     "ui-ace-editor" : {
         "label": {
-            "size": "Size"
+            "group": "Group",
+            "size": "Size",
+            "mode": "Mode",
+            "theme": "Theme"
+        },
+        "option": {
+            "javascript": "JavaScript",
+            "python": "Python",
+            "ruby": "Ruby",
+            "php": "PHP",
+            "java": "Java",
+            "c_cpp": "C/C++",
+            "go": "Go",
+            "rust": "Rust",
+            "html": "HTML",
+            "css": "CSS",
+            "markdown": "Markdown",
+            "asciidoc": "AsciiDoc",
+            "json": "JSON",
+            "yaml": "YAML",
+            "sql": "SQL",
+            "sh": "Shell Script",
+            "chrome": "Chrome",
+            "clouds": "Clouds",
+            "monokai": "Monokai",
+            "github": "GitHub",
+            "github_dark": "GitHub Dark",
+            "solarized_light": "Solarized Light",
+            "solarized_dark": "Solarized Dark"
         }
     }
 }
