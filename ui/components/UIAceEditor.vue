@@ -12,7 +12,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, inject, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import ace from 'ace-builds'
 /* eslint-disable import/no-unresolved */
 import modeAsciiDocUrl from 'ace-builds/src-noconflict/mode-asciidoc?url'
@@ -40,7 +42,6 @@ import themeSolarizedDarkUrl from 'ace-builds/src-noconflict/theme-solarized_dar
 import themeSolarizedLightUrl from 'ace-builds/src-noconflict/theme-solarized_light?url'
 /* eslint-enable import/no-unresolved */
 import { VAceEditor } from 'vue3-ace-editor'
-import { mapState } from 'vuex'
 
 ace.config.setModuleUrl('ace/mode/css', modeCSSUrl)
 ace.config.setModuleUrl('ace/mode/javascript', modeJavaScriptUrl)
@@ -67,75 +68,79 @@ ace.config.setModuleUrl('ace/theme/github_dark', themeGitHubDarkUrl)
 ace.config.setModuleUrl('ace/theme/solarized_light', themeSolarizedLightUrl)
 ace.config.setModuleUrl('ace/theme/solarized_dark', themeSolarizedDarkUrl)
 
-export default {
-    name: 'UIAceEditor',
-    components: {
-        VAceEditor
+const props = defineProps({
+    id: { type: String, required: true },
+    props: { type: Object, default: () => ({}) },
+    state: { type: Object, default: () => ({ enabled: false, visible: false }) }
+})
+
+const $socket = inject('$socket')
+const $dataTracker = inject('$dataTracker')
+const store = useStore()
+
+const messages = computed(() => store.state.data.messages)
+
+const content = computed({
+    get() {
+        return messages.value[props.id]?.payload
     },
-    inject: ['$socket', '$dataTracker'],
-    props: {
-        /* do not remove entries from this - Dashboard's Layout Manager's will pass this data to your component */
-        id: { type: String, required: true },
-        props: { type: Object, default: () => ({}) },
-        state: { type: Object, default: () => ({ enabled: false, visible: false }) }
-    },
-    data () {
-        return {
-            input: {
-                title: 'some text here will base turned into title case.'
-            },
-            vuetifyStyles: [
-                { label: 'Responsive Displays', url: 'https://vuetifyjs.com/en/styles/display/#display' },
-                { label: 'Flex', url: 'https://vuetifyjs.com/en/styles/flex/' },
-                { label: 'Spacing', url: 'https://vuetifyjs.com/en/styles/spacing/#how-it-works' },
-                { label: 'Text & Typography', url: 'https://vuetifyjs.com/en/styles/text-and-typography/#typography' }
-            ]
+    set(val) {
+        if (!messages.value[props.id]) {
+            messages.value[props.id] = {}
         }
-    },
-    computed: {
-        ...mapState('data', ['messages']),
-        content: {
-            get () {
-                return this.messages[this.id]?.payload
-            },
-            set (val) {
-                if (!this.messages[this.id]) {
-                    this.messages[this.id] = {}
-                }
-                this.messages[this.id].payload = val
-            }
-        },
-        mode: function () {
-            return this.getProperty('mode') || 'javascript'
-        },
-        theme: function () {
-            return this.getProperty('theme') || 'chrome'
-        }
-    },
-    created () {
-        // setup our event handlers, and informs Node-RED that this widget has loaded
-        this.$dataTracker(this.id, this.onInput, this.onLoad, this.onDynamicProperties)
-    },
-    methods: {
-        /*
-            widget-action just sends a msg to Node-RED, it does not store the msg state server-side
-            alternatively, you can use widget-change, which will also store the msg in the Node's datastore
-        */
-        send () {
-            this.$socket.emit('widget-change', this.id, this.content)
-        },
-        onBlur () {
-            if (this.props.sendOnBlur) {
-                this.send()
-            }
-        },
-        onEnter () {
-            if (this.props.sendOnEnter) {
-                this.send()
-            }
-        }
+        messages.value[props.id].payload = val
+    }
+})
+
+const mode = computed(() => {
+    return props.props.mode || 'javascript'
+})
+
+const theme = computed(() => {
+    return props.props.theme || 'chrome'
+})
+
+const send = () => {
+    $socket.emit('widget-change', props.id, content.value)
+}
+
+const onBlur = () => {
+    if (props.props.sendOnBlur) {
+        send()
     }
 }
+
+const onEnter = () => {
+    if (props.props.sendOnEnter) {
+        send()
+    }
+}
+
+const onInput = (msg) => {
+    if (msg.payload !== undefined && msg.payload !== null) {
+        content.value = msg.payload
+    }
+}
+
+const onLoad = (msg) => {
+    if (msg.payload !== undefined && msg.payload !== null) {
+        content.value = msg.payload
+    }
+}
+
+const onDynamicProperties = (msg) => {
+    const updates = msg.ui_update;
+    if (!updates) {
+        return;
+    }
+
+    updateDynamicProperty('mode', updates.mode);
+    updateDynamicProperty('theme', updates.theme);
+}
+
+onMounted(() => {
+    $dataTracker(props.id, onInput, onLoad, onDynamicProperties)
+})
 </script>
 
 <style scoped>
