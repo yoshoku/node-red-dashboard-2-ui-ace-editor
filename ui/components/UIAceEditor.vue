@@ -116,18 +116,6 @@ const onEnter = () => {
     }
 }
 
-const onInput = (msg) => {
-    if (msg.payload !== undefined && msg.payload !== null) {
-        content.value = msg.payload
-    }
-}
-
-const onLoad = (msg) => {
-    if (msg.payload !== undefined && msg.payload !== null) {
-        content.value = msg.payload
-    }
-}
-
 const onDynamicProperties = (msg) => {
     const updates = msg.ui_update;
     if (!updates) {
@@ -139,7 +127,7 @@ const onDynamicProperties = (msg) => {
 }
 
 onMounted(() => {
-    $dataTracker(props.id, onInput, onLoad, onDynamicProperties)
+    $dataTracker(props.id, null, null, onDynamicProperties)
 })
 </script>
 
