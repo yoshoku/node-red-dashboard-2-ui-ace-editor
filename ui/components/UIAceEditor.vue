@@ -13,8 +13,6 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, onMounted } from 'vue'
-import { useStore } from 'vuex'
 import ace from 'ace-builds'
 /* eslint-disable import/no-unresolved */
 import modeAsciiDocUrl from 'ace-builds/src-noconflict/mode-asciidoc?url'
@@ -40,8 +38,10 @@ import themeGitHubDarkUrl from 'ace-builds/src-noconflict/theme-github_dark?url'
 import themeMonokaiUrl from 'ace-builds/src-noconflict/theme-monokai?url'
 import themeSolarizedDarkUrl from 'ace-builds/src-noconflict/theme-solarized_dark?url'
 import themeSolarizedLightUrl from 'ace-builds/src-noconflict/theme-solarized_light?url'
+import { computed, inject, onMounted } from 'vue'
 /* eslint-enable import/no-unresolved */
 import { VAceEditor } from 'vue3-ace-editor'
+import { useStore } from 'vuex'
 
 ace.config.setModuleUrl('ace/mode/css', modeCSSUrl)
 ace.config.setModuleUrl('ace/mode/javascript', modeJavaScriptUrl)
@@ -81,10 +81,10 @@ const store = useStore()
 const messages = computed(() => store.state.data.messages)
 
 const content = computed({
-    get() {
+    get () {
         return messages.value[props.id]?.payload
     },
-    set(val) {
+    set (val) {
         if (!messages.value[props.id]) {
             messages.value[props.id] = {}
         }
@@ -116,18 +116,8 @@ const onEnter = () => {
     }
 }
 
-const onDynamicProperties = (msg) => {
-    const updates = msg.ui_update;
-    if (!updates) {
-        return;
-    }
-
-    updateDynamicProperty('mode', updates.mode);
-    updateDynamicProperty('theme', updates.theme);
-}
-
 onMounted(() => {
-    $dataTracker(props.id, null, null, onDynamicProperties)
+    $dataTracker(props.id, null, null, null)
 })
 </script>
 
