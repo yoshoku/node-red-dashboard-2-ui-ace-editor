@@ -38,8 +38,8 @@ import themeGitHubDarkUrl from 'ace-builds/src-noconflict/theme-github_dark?url'
 import themeMonokaiUrl from 'ace-builds/src-noconflict/theme-monokai?url'
 import themeSolarizedDarkUrl from 'ace-builds/src-noconflict/theme-solarized_dark?url'
 import themeSolarizedLightUrl from 'ace-builds/src-noconflict/theme-solarized_light?url'
-import { computed, inject, onMounted } from 'vue'
 /* eslint-enable import/no-unresolved */
+import { computed, inject, onMounted, ref, watch } from 'vue'
 import { VAceEditor } from 'vue3-ace-editor'
 import { useStore } from 'vuex'
 
@@ -79,18 +79,24 @@ const $dataTracker = inject('$dataTracker')
 const store = useStore()
 
 const messages = computed(() => store.state.data.messages)
-
-const content = computed({
-    get () {
-        return messages.value[props.id]?.payload
-    },
-    set (val) {
-        if (!messages.value[props.id]) {
-            messages.value[props.id] = {}
-        }
-        messages.value[props.id].payload = val
+// Sometimes `props.id` is not yet registered in `store.messages` when onMounted is triggered.
+// This watcher monitors the `messages` state until `props.id`  is present.
+const unwatch = watch(messages, () => {
+    $dataTracker(props.id)
+    if (messages.value[props.id]) {
+        unwatch()
     }
-})
+}, { deep: true, immediate: true })
+
+const content = ref(messages.value[props.id] ? messages.value[props.id].payload : '')
+// Watch the input payload and apply it to the editor.
+watch(messages, (newMessages) => {
+    if (messages.value[props.id]) {
+        if (newMessages[props.id].payload !== content.value) {
+            content.value = newMessages[props.id].payload.toString() || ''
+        }
+    }
+}, { deep: true })
 
 const mode = computed(() => {
     return props.props.mode || 'javascript'
@@ -117,7 +123,7 @@ const onEnter = () => {
 }
 
 onMounted(() => {
-    $dataTracker(props.id, null, null, null)
+    $dataTracker(props.id)
 })
 </script>
 
