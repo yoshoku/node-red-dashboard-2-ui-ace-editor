@@ -5,6 +5,7 @@
             v-model:value="content"
             :lang="mode"
             :theme="theme"
+            :readonly="readOnly"
             style="height: 100%;"
             @blur="onBlur"
             @keyup.enter="onEnter"
@@ -104,6 +105,10 @@ const mode = computed(() => {
 
 const theme = computed(() => {
     return props.props.theme || 'chrome'
+})
+
+const readOnly = computed(() => {
+    return props.props.readOnly || false
 })
 
 const send = () => {

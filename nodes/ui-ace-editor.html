@@ -11,6 +11,7 @@
             passthru: { value: true },
             sendOnBlur: { value: true },
             sendOnEnter: { value: true },
+            readOnly: { value: false },
             width: {
                 value: 0,
                 validate: function (v) {
@@ -99,14 +100,18 @@
         <input type="checkbox" checked id="node-input-passthru" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;" />
     </div>
     <div class="form-row">
-        <label style="width: auto;"><i class="fa fa-clock-o"></i>Send message on:</label>
+        <label style="width: auto;"><i class="fa fa-clock-o"></i> Send message on:</label>
     </div>
     <div class="form-row" style="margin-left: 25px;">
-        <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;">
+        <input type="checkbox" checked id="node-input-sendOnBlur" style="display:inline-block; width:auto; vertical-align:top;" />
         <label for="node-input-sendOnBlur" style="width: auto;">Focus Leave</label>
     </div>
     <div class="form-row" style="margin-left: 25px;">
-        <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;">
+        <input type="checkbox" checked id="node-input-sendOnEnter" style="display:inline-block; width:auto; vertical-align:top;" />
         <label for="node-input-sendOnEnter" style="width: auto;">Press Enter</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-readOnly" style="width: auto;"><i class="fa fa-info-circle"></i> Read only:</label>
+        <input type="checkbox" id="node-input-readOnly" style="display:inline-block; width:auto; margin-top: 0; margin-left: 3px;" />
     </div>
 </script>
