@@ -20,7 +20,7 @@ export default [
             import: importPlugin
         },
         rules: {
-            '@stylistic/indent': ['error', 4],
+            '@stylistic/indent': ['error', 4, { SwitchCase: 0 }],
             'object-shorthand': ['error'],
             'sort-imports': [
                 'error',
